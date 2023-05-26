@@ -1,6 +1,6 @@
 //리액트 라이브러리 사용
 import React, {Component} from 'react'
-import {Text,View,Button, StyleSheet} from 'react-native'
+import {Text,View,Button, StyleSheet, Image} from 'react-native'
 
 //리액트 네이티브는 Component를 상속받은 클래스들이 화면에 보여질 수 있음
 class MyApp extends Component{
@@ -29,6 +29,7 @@ class MyApp extends Component{
             <View style={{marginTop:16}}>
                 <Button title={btnTitle}></Button>
             </View>
+            <Image source={require('./image/newyork.jpg')} style={style.img}></Image>
             
         </View>
         )
@@ -40,17 +41,23 @@ const style= StyleSheet.create({
     root:{
         flex:1,
         padding:16,
-        backgroundColor: '#cccc00'
+        backgroundColor: 'yellowgreen'
     },
     titleText:{
-        color:'Navy',
+        color:'navy',
         fontSize:24,
         fontWeight:'bold',
-        margin:16
+        margin:8
     },
     text:{
         margin:8,
-        color:'blue'
+        color:'darkgreen'
+    },
+    img:{
+        flex:1, //남은공간 다먹어
+        marginTop:8,
+        width:null,
+        resizeMode:'contain'
     }
 })
 
