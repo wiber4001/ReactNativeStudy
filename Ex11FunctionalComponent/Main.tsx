@@ -1,4 +1,4 @@
-import React,{Component} from "react";
+import React,{Component, useEffect, useState} from "react";
 import {View, Text, Button, StyleSheet} from 'react-native'
 
 export default class Main extends Component {
@@ -31,13 +31,74 @@ export default class Main extends Component {
                 {/* 4)컴포넌트들 간의 데이터 제어 */}
                 {/* RN은 컴포넌트 끼리 직접 교류를 할 수 있는 방법 자체가 없음:안드로이드와의 차이점 */}
                 {/* 그래서 함수를 통해야되는데 함수를 props에 넣어서 전달함 */}
+                <AAA onPress={this.changeText}></AAA>
+                <BBB msg={this.state.msg}></BBB>
+                {/* 결론적으로 functional Component는 class Component에 비해 코딩이 간결함 */}
+                {/* state키워드를 쓸수없는 단점이 있어서-> 화면자동갱신이안됨 */}
+                {/* 그래서 단순한 화면 컴포넌트(안드로이드의 프래그먼트처럼)로 적합하였음 */}
+                {/* 하지만, 현재는 functional Component의 간결한 코딩이 선호되어 state가 없다는 단점을 보완하는 Hook개념이 생김  */}
+                {/* 5) functional Component Hook 실습 */}
+                <MyComponent7></MyComponent7>
 
 
             </View>
         )
-        
-    }
+    }//render()
+
+    state:React.ComponentState={msg:"초기값"}
+    changeText= ()=> this.setState({msg:"안녕하십니까 바뀌었네요"})
+
 }//Main class..
+
+//5) functional Component Hook..
+function MyComponent7():JSX.Element{
+    // 함수형 컴포넌트는 state, setState()가 없음
+    // 함수형 컴포넌트에서 state를 사용할 수 있도록 만드는 문법: useState()
+    // msg라는 특별한 변수 (state능력을 받은)와 값을 변경하는 setMsg()메소드를 선언
+    let [msg,setMsg] = useState<string>("초기값")
+    const [age,setAge]= useState(0) //number type도 가능
+
+    //함수형 컴포넌트는 라이프사이클 메소드도 없음
+    //화면을 갱신할때 자동 호출되던 componentDidUpdate, componentDidMount 메소드를 대체하는 함수
+    //화면이 처음시작할때와 state변경으로 인해 화면이 갱신될 때 마다 호출되는 기능을 만들고 싶을때 사용
+    //ex) 서버에서 데이터를 읽어오거나 DB작업등을 할때
+    useEffect(()=>{
+        console.log("useEffect called.")
+    })
+
+    // 지역변수
+    // let msg="Hello"
+    return(
+        <View style={{padding:4}}>
+            <Text style={style.text}>{msg}</Text>
+            <Button title="button" onPress={()=> setMsg('안녕합니까')}></Button>
+            <Text style={style.text}>{age}</Text>
+            <Button title="add age" onPress={()=>setAge(age+1)}></Button>
+        </View>
+    )
+}
+
+
+//4) Component간의 데이터 제어- 직접 참조는 불가능
+//4.1) 버튼을 가진 함수형 컴포넌트
+type AaaProps={onPress:()=>void}
+const AAA= (props:AaaProps)=>{
+    return(
+        <View style={{padding:4}}>
+            <Button title="change" onPress={props.onPress}></Button>
+        </View>
+    )
+
+}
+//4.2) 버튼에 의해 변경될 글씨를 보여주는 함수형 컴포넌트
+type BbbProps={msg:string}
+const BBB= (props:BbbProps)=>{
+    return (
+        <View style={{padding:8}}>
+            <Text style={style.text}>message: {props.msg}</Text>
+        </View>
+    )
+}
 
 //3.4) 구조분해 할당으로 받기
 type Props4= {
@@ -137,11 +198,11 @@ class MyComponent extends Component{
 }
 const style=StyleSheet.create({
     root:{
-        flex:1, padding:16
+        flex:1, padding:4
     },
     text:{
-        margin:8,
-        padding:8,
+        margin:4,
+        padding:4,
         color:'navy',
         fontSize:16
     }
