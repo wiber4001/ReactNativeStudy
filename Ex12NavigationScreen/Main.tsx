@@ -13,7 +13,7 @@
 
 //Main 컴포넌트 만들기
 import React from "react";
-
+import {Button, Image} from 'react-native'
 //1)가장 먼저 Navigator들을 감싸는 최상위 Container 컴포넌트가 있어야 함
 import { NavigationContainer } from "@react-navigation/native";
 
@@ -22,12 +22,41 @@ import { NavigationContainer } from "@react-navigation/native";
 //각 네비게이터를 사용할 때마다 전용 라이브러리를 추가로 설치해야 함.
 
 //이 중에서 가장 기본인 StackNavigator 사용해보기
+import { createStackNavigator } from "@react-navigation/stack";
+//Stack Navigator에 의해 전환될 화면 스크린 컴포넌트들 import
+import HomeComponent from "./screen/HomeComponent";
+import SecondComponent from "./screen/SecondComponent";
+//typescript 에서는 스크린 리스트를 타입을 지정해줄 것을 권장함
 
+export type StackScreenList = {
+    Home:undefined, //화면명(route명): 전환할때 전달할 파라미터의 자료형 
+    Second: undefined|{name:string, age:number} //or 연산자(|)로 타입여러개 지정가능
+}
+
+const Stack=createStackNavigator()
 
 export default function Main():JSX.Element {
     return (
         <NavigationContainer>
-
+            <Stack.Navigator
+                screenOptions={{
+                    headerStyle:{backgroundColor:'green'},
+                    headerTintColor:'white',
+                    headerTitleAlign:'center'
+                }}>
+                <Stack.Screen 
+                options={{
+                    title:"홈", 
+                    headerTintColor:'pink',
+                    headerRight:()=>{return <Button title='menu'></Button>},
+                    headerLeft: ()=> <Image source={require("./image/a_ele.png")} style={{width:32,height:32, marginLeft:16}}></Image>,
+                    headerTitle:()=> <Image source={require("./image/a_ele.png")} style={{width:32,height:32, marginLeft:16}}></Image>,
+                    headerShown: true
+                }} 
+                name='Home' 
+                component={HomeComponent}></Stack.Screen>
+                <Stack.Screen name='Second' component={SecondComponent}></Stack.Screen>
+            </Stack.Navigator>
         </NavigationContainer>
     )
 
