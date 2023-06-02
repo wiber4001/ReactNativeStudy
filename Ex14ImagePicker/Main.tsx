@@ -6,7 +6,7 @@ import React, { useState } from "react";
 import {View, Text, Image, Button, Alert, StyleSheet, ImageURISource} from 'react-native'
 
 //이미지 피커 라이브러리 기능 메소드 import
-import { launchCamera, launchImageLibrary, CameraOptions } from "react-native-image-picker";
+import { launchCamera, launchImageLibrary, CameraOptions, ImagePickerResponse, ImageLibraryOptions, Asset } from "react-native-image-picker";
 
 
 export default function Main():JSX.Element{
@@ -27,11 +27,46 @@ export default function Main():JSX.Element{
             videoQuality:'high',
         }
         //촬영결과를 callback메소드로 처리함
-        launchCamera(options, ()=>{})
+        launchCamera(options, (response:ImagePickerResponse)=>{//파라미터로 응답객체를 전달
+            if(response.didCancel) Alert.alert('촬영 취소')
+            else if(response.errorMessage) Alert.alert('Error:'+response.errorMessage)
+            else{
+                //이곳에 왔다면 이미지가 잘 촬영된 것임.
+                //촬영된 이미지는 response 객체의 assets라는 속성으로 전달됨
+                if(response.assets!=null){
+                    //선택된 사진의 Image 객체를 이미지뷰가 보여주는 img에 저장
+                    //선택된 이미지의 uri경로를 얻어오기
+                    const uri=response.assets[0].uri
+                    const source={uri:uri}
+                    setImg(source)
+
+                }
+            }
+
+        })
     }
 
-    const showPhoto=()=>{
+    //사진앱을 실행하는 기능 화살표 함수
+    const showPhoto= async ()=>{ //await이 포함된 함수 앞에 async가 있어야함
+        //옵션객체
+        const options:ImageLibraryOptions={
+            mediaType:'photo',
+            selectionLimit:5,
+        }
+        // launchImageLibrary(options)
 
+        //ES7의 새로운 문법: async-await문법 (promise문법) [callback비동기 작업을 동기작업처럼 처리함]
+        const response = await launchImageLibrary(options)
+        if(response.didCancel) Alert.alert('취소')
+        else if (response.errorMessage) Alert.alert(response.errorMessage)
+        else{
+            const uris:Asset[]=[]
+            response.assets?.forEach((value)=>uris.push(value))
+
+            //원래는 FlatList로 이미지들을 보여줘야하지만 시간상 첫번째 이미지만 보여주기
+            setImg(uris[0])
+        }
+        
     }
 
     return (
